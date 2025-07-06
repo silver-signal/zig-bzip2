@@ -6,14 +6,16 @@ pub fn build(b: *std.Build) void {
 
     _ = b.step("check", "Check that build.zig compiles. Used by zls for analysis.");
 
-    const upstream = b.dependency("bzip", .{});
+    const upstream = b.dependency("bzip2", .{});
 
-    const big_files = &.{"-D_FILE_OFFSET_BITS=64"};
-    const flags: []const []const u8 = &.{ "-Wall", "-Winline", "-O2", "-g" } ++ big_files;
+    const big_files: []const []const u8 = &.{"-D_FILE_OFFSET_BITS=64"};
+    const cflags: []const []const u8 = &.{ "-Wall", "-Winline", "-O2", "-g" };
+    const flags = cflags ++ big_files;
 
     const bz2_mod = b.createModule(.{
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     bz2_mod.addCSourceFiles(.{
         .root = upstream.path(""),
@@ -25,11 +27,13 @@ pub fn build(b: *std.Build) void {
         .name = "bz2",
         .root_module = bz2_mod,
     });
+    bz2.installHeader(upstream.path("bzlib.h"), "bzlib.h");
     b.installArtifact(bz2);
 
     const bzip2_mod = b.createModule(.{
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     bzip2_mod.addCSourceFiles(.{
         .root = upstream.path(""),
@@ -47,6 +51,7 @@ pub fn build(b: *std.Build) void {
     const bzip2recover_mod = b.createModule(.{
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     bzip2recover_mod.addCSourceFiles(.{
         .root = upstream.path(""),
