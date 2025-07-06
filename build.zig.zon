@@ -1,6 +1,6 @@
 .{
     .name = .bzip2,
-    .version = "0.0.0",
+    .version = "1.0.8",
     .minimum_zig_version = "0.14.0",
     .fingerprint = 0x81bc4b11db678e53, // Changing this has security and trust implications.
     .dependencies = .{
