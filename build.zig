@@ -12,6 +12,10 @@ pub fn build(b: *std.Build) void {
     const cflags: []const []const u8 = &.{ "-Wall", "-Winline", "-O2", "-g" };
     const flags = cflags ++ big_files;
 
+    const linkage = b.option(std.builtin.LinkMode, "linkage", "Link mode") orelse .static;
+    const strip = b.option(bool, "strip", "Omit debug information");
+    const pic = b.option(bool, "pic", "Produce Position Independent Code");
+
     const enable_bz2 = b.option(bool, "bz2", "Install the bz2 lib (default=true)") orelse true;
     const enable_bzip2 = b.option(bool, "bzip2", "Install the bzip2 exe (default=true)") orelse true;
     const enable_bzip2recover = b.option(bool, "bzip2recover", "Install the bzip2recover executable (default=true)") orelse true;
@@ -20,6 +24,8 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
         .link_libc = true,
+        .strip = strip,
+        .pic = pic,
     });
     bz2_mod.addCSourceFiles(.{
         .root = upstream.path(""),
@@ -30,6 +36,7 @@ pub fn build(b: *std.Build) void {
     const bz2 = b.addLibrary(.{
         .name = "bz2",
         .root_module = bz2_mod,
+        .linkage = linkage,
     });
     bz2.installHeader(upstream.path("bzlib.h"), "bzlib.h");
     if (enable_bz2) b.installArtifact(bz2);
@@ -38,6 +45,8 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
         .link_libc = true,
+        .strip = strip,
+        .pic = pic,
     });
     bzip2_mod.addCSourceFiles(.{
         .root = upstream.path(""),
@@ -56,6 +65,8 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
         .link_libc = true,
+        .strip = strip,
+        .pic = pic,
     });
     bzip2recover_mod.addCSourceFiles(.{
         .root = upstream.path(""),
