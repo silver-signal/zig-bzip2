@@ -12,6 +12,10 @@ pub fn build(b: *std.Build) void {
     const cflags: []const []const u8 = &.{ "-Wall", "-Winline", "-O2", "-g" };
     const flags = cflags ++ big_files;
 
+    const enable_bz2 = b.option(bool, "bz2", "Install the bz2 lib (default=true)") orelse true;
+    const enable_bzip2 = b.option(bool, "bzip2", "Install the bzip2 exe (default=true)") orelse true;
+    const enable_bzip2recover = b.option(bool, "bzip2recover", "Install the bzip2recover executable (default=true)") orelse true;
+
     const bz2_mod = b.createModule(.{
         .target = target,
         .optimize = optimize,
@@ -28,7 +32,7 @@ pub fn build(b: *std.Build) void {
         .root_module = bz2_mod,
     });
     bz2.installHeader(upstream.path("bzlib.h"), "bzlib.h");
-    b.installArtifact(bz2);
+    if (enable_bz2) b.installArtifact(bz2);
 
     const bzip2_mod = b.createModule(.{
         .target = target,
@@ -46,7 +50,7 @@ pub fn build(b: *std.Build) void {
         .name = "bzip2",
         .root_module = bzip2_mod,
     });
-    b.installArtifact(bzip2);
+    if (enable_bzip2) b.installArtifact(bzip2);
 
     const bzip2recover_mod = b.createModule(.{
         .target = target,
@@ -62,7 +66,7 @@ pub fn build(b: *std.Build) void {
         .name = "bzip2recover",
         .root_module = bzip2recover_mod,
     });
-    b.installArtifact(bzip2_recover);
+    if (enable_bzip2recover) b.installArtifact(bzip2_recover);
 }
 
 const bzip2_src: []const []const u8 = &.{
