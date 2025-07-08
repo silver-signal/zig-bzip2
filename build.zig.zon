@@ -5,7 +5,7 @@
     .fingerprint = 0x81bc4b11db678e53, // Changing this has security and trust implications.
     .dependencies = .{
         .bzip2 = .{
-            .url = "https://sourceware.org/pub/bzip2/bzip2-latest.tar.gz",
+            .url = "https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz",
             .hash = "N-V-__8AAEg_LwBxlEVzMYnlhoZahVvdwk6ddIRturUKBCXF",
         },
     },
